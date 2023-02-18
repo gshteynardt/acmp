@@ -17,14 +17,10 @@ function readline() {
   }
 }
 
-const [a, b, c] = readline().split(' ');
+let [a, b, c] = readline().split(' ').map(BigInt);
 
-const max = (strA, strB) => {
-  if (strA.length === strB.length) {
-    return strA > strB ? strA : strB;
-  }
+const max = (a, b) => {
+  return a > b ? a : b;
+}
 
-  return strA.length > strB.length ? strA : strB;
-};
-
-console.log(max(max(a, b), c));
+console.log(max(max(a, b), c).toString());
