@@ -26,6 +26,7 @@ function readline() {
   10 - 3
   9 - 3
 */
+
 const bigSqrt = a => {
   a = String(a);
 
