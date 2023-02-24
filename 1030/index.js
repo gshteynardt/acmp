@@ -17,9 +17,33 @@ function readline() {
   }
 }
 
-// const [a1, a2, a3, a4] = readline().split(/\s+/).map(Number);
+const min = (a, b) => {
+  return a < b ? a : b;
+}
 
-// console.log(Math.trunc(Math.sqrt(Math.min(a1, a2) + Math.min(a3, a4))));
+const bigSqrt = a => {
+  a = String(a);
 
-const [ t ] = readline().split(/\s+/).map(Number);
-console.log((t).toFixed(2));
+  if (a === '0') {
+    return '0';
+  }
+
+  let q = BigInt('1' + '0'.repeat(Math.ceil(a.length / 2))); // right * right > a
+  a = BigInt(a);
+
+  while (true) {
+    const nq = (q + a / q) >> BigInt(1);
+
+    if (nq >= q) {
+      break;
+    }
+
+    q = nq;
+  }
+
+  return String(q);
+};
+
+const [a1, a2, a3, a4] = readline().split(/\s+/).map(BigInt);
+
+console.log(bigSqrt(min(a1, a2) + min(a3, a4)));
