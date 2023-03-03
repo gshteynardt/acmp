@@ -17,25 +17,25 @@ function readline() {
   }
 }
 
-const [a, k, b, m, x] = readline().split(' ').map(Number);
+const [a, k, b, m, x] = readline().split(' ').map(BigInt);
 
 const dayToTree = d => {
-  const per1 = Math.floor(d - Math.floor(d / k)) * a;
-  const per2 = Math.floor(d - Math.floor(d / m)) * b;
+  const per1 = (d - d / k) * a;
+  const per2 = (d - d / m) * b;
 
   return per1 + per2;
 };
 
-let left = 0; //dayToQuantity(left) < x
-let right = 1; //dayToQuantity(right) >= x
+let left = 0n; //dayToQuantity(left) < x
+let right = 1n; //dayToQuantity(right) >= x
 
 while (dayToTree(right) < x) {
   left = right;
-  right *= 2;
+  right *= 2n;
 }
 
-while (right - left > 1) {
-  const mid = Math.floor(left + (right - left) / 2);
+while (right - left > 1n) {
+  const mid = (left + right) / 2n;
 
   if (dayToTree(mid) < x) {
     left = mid;
@@ -44,4 +44,4 @@ while (right - left > 1) {
   }
 }
 
-console.log(right);
+console.log(String(right));

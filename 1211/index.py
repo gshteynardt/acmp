@@ -20,6 +20,6 @@ while right - left > 1:
     if day_to_tree(mid) < x:
         left = mid
     else:
-      right = mid
+        right = mid
 
 print(right)
