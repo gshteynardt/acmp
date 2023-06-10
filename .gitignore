@@ -1,1 +1,14 @@
+## Other
+
+*.log
+node_modules
+.cache
+dist
+
+# OS and IDE
+
+## Idea-based IDEs
+.idea
+
+## OSX
 .DS_Store
