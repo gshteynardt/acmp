@@ -35,7 +35,8 @@ seen[x1][y1] = true;
 let front = 0;
 
 while (front < q.length) {
-  const [x, y, steps] = q[front++];
+  const [x, y, steps] = q[front];
+  front++;
 
   if (x === x2 && y === y2) {
     console.log(steps);

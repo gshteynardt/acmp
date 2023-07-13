@@ -40,27 +40,31 @@ const directions = [
 
 const seen = Array.from({ length: n }, () => Array.from({ length: n }, () => false));
 
-const q = [];
-q.push([x1, y1, 0]);
+let curr = [];
+curr.push([x1, y1, 0]);
 seen[x1][y1] = true;
-let front = 0;
+let found = false;
 
-while (front < q.length) {
-  const [x, y, steps] = q[front];
-  front++;
+while (curr.length > 0 && !found) {
+  const next = [];
 
-  if (x === x2 && y === y2) {
-    console.log(steps);
-    break;
-  }
+  for (const [x, y, steps] of curr) {
+    if (x === x2 && y === y2) {
+      console.log(steps);
+      found = true;
+      break;
+    }
 
-  for (const [dx, dy] of directions) {
-    const nx = x + dx;
-    const ny = y + dy;
+    for (const [dx, dy] of directions) {
+      const nx = x + dx;
+      const ny = y + dy;
 
-    if (0 <= nx && nx < n && 0 <= ny && ny < n && !seen[nx][ny]) {
-      q.push([nx, ny, steps + 1]);
-      seen[nx][ny] = true;
+      if (0 <= nx && nx < n && 0 <= ny && ny < n && !seen[nx][ny]) {
+        next.push([nx, ny, steps + 1]);
+        seen[nx][ny] = true;
+      }
     }
   }
+
+  curr = next;
 }
