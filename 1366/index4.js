@@ -1,3 +1,4 @@
+//Только направо
 function readline() {
   const fs = require('fs');
   const b = Buffer.alloc(1);
@@ -48,7 +49,7 @@ const directions = [
 ];
 
 const seen = new Set();
-let getKey = (d, r, c) => (d * sizeR + r) * sizeC + c;
+const getKey = (d, r, c) => (d * sizeR + r) * sizeC + c;
 const q = [];
 let front = 0;
 

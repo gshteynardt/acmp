@@ -1,3 +1,4 @@
+//игра «Flip-Flop»
 function readline() {
   const fs = require('fs');
   const b = Buffer.alloc(1);
