@@ -125,6 +125,14 @@ for (let r = 0; r < sizeR; r++) {
 }
 
 const getKey = (r, c) => r * sizeC + c;
+
+const unpackKey = (key) => {
+  const c = key % sizeC;
+  const r = (key - c) / sizeC;
+
+  return [r, c];
+};
+
 const INF = 100 * (sizeR + sizeC - 1) + 1;
 const minCost = Array.from({ length: sizeR }, () => Array.from({ length: sizeC }, () => INF));
 minCost[0][0] = cost[0][0];
@@ -134,8 +142,7 @@ pq.add(cost[0][0], getKey(0, 0));
 
 while (pq.size() > 0) {
   const [dist, v] = pq.poll();
-  const minR = Math.floor(v / sizeC);
-  const minC = v % sizeC;
+  const [minR, minC] = unpackKey(v);
 
   if (minR === sizeR - 1 && minC === sizeC - 1) {
     break;
