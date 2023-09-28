@@ -15,7 +15,7 @@ for (let i = 0; i <= input.length; i++) {
   }
 }
 
-let values = Array.from({ length: numCount }, () => 0);
+let values = new Int32Array(numCount);
 let last = 0;
 numCount = 0;
 
@@ -40,7 +40,7 @@ const nE = values[1];
 const mark = values.slice(2, 2 + nV);
 
 const adj = Array.from({ length: nV }, () => null);
-const adjLen = Array.from({ length: nV }, () => 0);
+const adjLen = new Int32Array(nV);
 
 for (let i = 0; i < nE; i++) {
   const v1 = values[2 + nV + i * 3 + 0] - 1;
@@ -51,7 +51,7 @@ for (let i = 0; i < nE; i++) {
 }
 
 for (let i = 0; i < nV; i++) {
-  adj[i] = Array.from({ length: adjLen[i] }, () => 0);
+  adj[i] = new Int32Array(adjLen[i]);
   adjLen[i] = 0;
 }
 
