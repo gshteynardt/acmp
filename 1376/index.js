@@ -11,7 +11,7 @@ const assert = (e) => {
 
 const EOF = -1;
 
-function nextChar() { // returns code of next char and skips it or returns EOF if the stream ended
+function nextChar() { // returns code of firstFlightTo char and skips it or returns EOF if the stream ended
   if (pos === size) {
     size = fs.readSync(0, b, 0, b.length);
     pos = 0;
@@ -69,12 +69,10 @@ function nextInt() {
 const nV = nextInt();
 const nE = nextInt();
 const nC = nextInt();
-const cities = [];
-const INF = nV * 10 ** 5;
+const INF = nV * (10 ** 5);
 const dist = Array.from({ length: nV }, () => Array.from({ length: nV }, () => INF));
-const next = Array.from({ length: nV }, () => Array.from({ length: nV }, () => -1));
-const keyToIndexFlight = [];
-const getKey = (u, v) => u * nE + v;
+const firstFlightTo = Array.from({ length: nV }, () => Array.from({ length: nV }, () => -1));
+const flightIndex = Array.from({ length: nV }, () => Array.from({ length: nV }, () => -1));
 
 for (let i = 0; i < nV; i++) {
   dist[i][i] = 0;
@@ -83,26 +81,30 @@ for (let i = 0; i < nV; i++) {
 for (let i = 0; i < nE; i++) {
   const u = nextInt() - 1;
   const v = nextInt() - 1;
-  const w = nextInt();
-  keyToIndexFlight.push(getKey(u, v));
-  dist[u][v] = Math.min(dist[u][v], w);
-  next[u][v] = v;
+  const w = -nextInt();
+
+  if (w < dist[u][v]) {
+    dist[u][v] = w;
+    flightIndex[u][v] = i;
+  }
+
+  firstFlightTo[u][v] = v;
 }
+
+const cities = Array.from({ length: nC }, () => -1);
 
 for (let i = 0; i < nC; i++) {
-  cities[i] = nextInt();
+  cities[i] = nextInt() - 1;
 }
-
 
 for (let m = 0; m < nV; m++) {
   for (let i = 0; i < nV; i++) {
     for (let j = 0; j < nV; j++) {
       if (dist[i][m] < INF && dist[m][j] < INF) {
-        if (dist[i][j] < dist[i][m] + dist[m][j]) {
-          next[i][j] = next[i][m];
+        if (dist[i][m] + dist[m][j] < dist[i][j]) {
+          dist[i][j] = Math.max(-INF, dist[i][m] + dist[m][j]);
+          firstFlightTo[i][j] = firstFlightTo[i][m];
         }
-
-        dist[i][j] = Math.max(-INF, Math.max(dist[i][j], dist[i][m] + dist[m][j]));
       }
     }
   }
@@ -110,13 +112,14 @@ for (let m = 0; m < nV; m++) {
 
 let hasLoop = false;
 
-for (let i = 0; i < nV && !hasLoop; i++) {
-  for (let j = 0; j < nV && !hasLoop; j++) {
-    for (let m = 0; m < nV; m++) {
-      if (dist[i][m] < INF && dist[m][j] < INF && dist[m][m] > 0) {
-        hasLoop = true;
-        break;
-      }
+for (let c = 1; c < nC && !hasLoop; c++) {
+  let i = cities[c - 1];
+  let j = cities[c];
+
+  for (let m = 0; m < nV; m++) {
+    if (dist[i][m] < INF && dist[m][j] < INF && dist[m][m] < 0) {
+      hasLoop = true;
+      break;
     }
   }
 }
@@ -124,40 +127,23 @@ for (let i = 0; i < nV && !hasLoop; i++) {
 if (hasLoop) {
   console.log('infinitely kind');
 } else {
-  const constructPath = (u, v) => {
-    if (next[u][v] == -1) {
-      return [];
-    }
+  const path = [];
 
-    const path = [];
-    path.push(u);
-
+  const addPath = (u, v) => { // returns list of flight ids
     while (u != v) {
-      u = next[u][v];
-      path.push(u);
+      const m = firstFlightTo[u][v];
+      assert(m !== -1);
+      path.push(flightIndex[u][m]);
+      u = m;
     }
-
-    return path;
   }
-
-  const paths = [];
-  let totalFlight = 0;
 
   for (let i = 1; i < cities.length; i++) {
-    const path = constructPath(cities[i - 1] - 1, cities[i] - 1);
-    totalFlight += path.length - 1;
-
-    paths.push(path);
+    addPath(cities[i - 1], cities[i]);
   }
 
-  console.log(totalFlight)
-
-  for (const path of paths) {
-    for (let i = 1; i < path.length; i++) {
-      const key = getKey(path[i - 1], path[i]);
-      console.log(keyToIndexFlight.indexOf(key) + 1);
-    }
-  }
+  console.log(path.length)
+  console.log(path.map(flight => flight + 1).join(' '));
 }
 
 /*
