@@ -69,3 +69,25 @@ class Scanner {
 }
 
 const input = new Scanner();
+
+const a = input.nextInt();
+const b = input.nextInt();
+
+const gcd = (a, b) => {
+  while (b !== 0) {
+    const t = a % b;
+    a = b;
+    b = t;
+  }
+  return a;
+};
+
+const lcm = (a, b) => {
+  return a / gcd(a, b) * b;
+};
+
+console.log(lcm(a, b));
+
+/*
+36 27
+*/

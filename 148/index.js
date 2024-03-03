@@ -69,3 +69,21 @@ class Scanner {
 }
 
 const input = new Scanner();
+
+const a = input.nextInt();
+const b = input.nextInt();
+
+const gcd = (a, b) => {
+  while (b !== 0) {
+      const t = a % b;
+      a = b;
+      b = t;
+  }
+  return a;
+};
+
+console.log(gcd(a, b));
+
+/*
+12 42
+*/

@@ -69,3 +69,33 @@ class Scanner {
 }
 
 const input = new Scanner();
+const nextInt = () => input.nextInt();
+
+const first = nextInt();
+const last = nextInt();
+
+const isPrime = Array(1 + last).fill(true);
+isPrime[0] = false;
+isPrime[1] = false;
+
+for (let i = 2; i * i <= last; i++) {
+  if (isPrime[i]) {
+    for (let j = i * i; j <= last; j += i) {
+      isPrime[j] = false;
+    }
+  }
+}
+
+const primes = [];
+
+for (let i = first; i <= last; i++) {
+  if (isPrime[i]) {
+    primes.push(i);
+  }
+}
+
+if (primes.length === 0) {
+  console.log('Absent');
+} else {
+  console.log(primes.join('\n'));
+}

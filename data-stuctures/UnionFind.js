@@ -6,22 +6,19 @@ class UnionFind {
   }
 
   getRoot(v) {
-    const v0 = v;
+    let r = v;
 
-    while (this.parent[v] >= 0) {
-      v = this.parent[v];
+    while (this.parent[r] >= 0) {
+      r = this.parent[r];
     }
 
-    const root = v;
-    v = v0;
-
-    while (v !== root) {
+    while (v !== r) {
       const pV = this.parent[v];
-      this.parent[v] = root;
+      this.parent[v] = r;
       v = pV;
     }
 
-    return root;
+    return r;
   }
 
   union(u, v) {
