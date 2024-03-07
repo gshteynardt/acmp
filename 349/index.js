@@ -11,6 +11,7 @@ class Scanner {
     this.pos = 0;
     this.size = 0;
     this.EOF = -1;
+    this.nextInt = this.nextInt.bind(this);
   }
 
   _nextChar() { // returns code of next char and skips it or returns EOF if the stream ended
@@ -69,7 +70,7 @@ class Scanner {
 }
 
 const input = new Scanner();
-const nextInt = () => input.nextInt();
+const nextInt = input.nextInt;
 
 const first = nextInt();
 const last = nextInt();
