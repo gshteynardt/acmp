@@ -72,45 +72,37 @@ class Scanner {
 const input = new Scanner();
 const nextInt = input.nextInt;
 
-let pos = nextInt();
-let found = false;
+const sizeR = nextInt();
+const sizeC = nextInt();
+const grid = Array.from({ length: sizeR }, () => Array(sizeC));
 
-for (let step = 26; step >= 1 && !found; step--) {
-  const prevSize = (1 << (step - 1)) - 1;
-
-  if (pos === 1) {
-    console.log(String.fromCharCode('a'.charCodeAt() + (step - 1)));
-    found = true;
-  } else if (pos <= 1 + prevSize) {
-    pos--;
-  } else {
-    pos -= 1 + prevSize;
+for (let r = 0; r < sizeR; r++) {
+  for (let c = 0; c < sizeC; c++) {
+    grid[r][c] = nextInt();
   }
 }
 
-assert(found);
+const INF = (sizeR + sizeC - 1) * 100 + 1;
+const minSum = Array.from({ length: sizeR }, () => Array(sizeC).fill(INF)); // minSum[r][c] - минимальная сумма чисел в клетках по пути из [0][0] -> [r][c]
+minSum[0][0] = grid[0][0];
+
+for (let r = 0; r < sizeR; r++) {
+  for (let c = 0; c < sizeC; c++) {
+    if (r + 1 < sizeR) {
+      minSum[r + 1][c] = Math.min(minSum[r + 1][c], minSum[r][c] + grid[r + 1][c]);
+    }
+
+    if (c + 1 < sizeC) {
+      minSum[r][c + 1] = Math.min(minSum[r][c + 1], minSum[r][c] + grid[r][c + 1]);
+    }
+  }
+}
+
+console.log(minSum[sizeR - 1][sizeC - 1]);
 
 /*
-шаг 1 - 1 = 2^1 - 1;
-шаг 2 - 1 + (шаг 1) * 2 = 1 + 1 * 2 = 3 = 2^2 - 1;
-шаг 3 - 1 + (шаг 2) * 2 = 1 + 3 * 2 = 7 = 2^3 - 1;
-шаг 4 - 1 + (шаг 3) * 2 = 1 + 7 * 2 = 15 = 2^4 - 1;
-
-найти символ на позиции N = 10 в строке после шага 4
-найти символ на позиции N = 2 в строке после шага 3
-найти символ на позиции N = 1 в строке после шага 2 для первого символа шага ответ получается по кодам символов String.fromCharCode('a'.charCodeAt() + (step - 1))
-dcbaabaacbaabaa
-???????????????
-d#######$$$$$$$
-         ^
-шаг 4 = d + (шаг 3 длины 7) + (шаг 3 длины 7);
-
-10
-
-10 - 7 + 1 = 2
-
-шаг 3 = c + (шаг 2 длины 3) + (шаг 2 длины 3);
-
-c###$$$
- ^
+3 4
+1 1 1 1
+5 2 2 100
+9 4 2 1
 */

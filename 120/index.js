@@ -72,45 +72,31 @@ class Scanner {
 const input = new Scanner();
 const nextInt = input.nextInt;
 
-let pos = nextInt();
-let found = false;
+const sizeR = nextInt();
+const sizeC = nextInt();
+const minSum = Array.from({ length: sizeR }, () => Array(sizeC)); // minSum[r][c] - минимальная сумма чисел в клетках по пути из [0][0] -> [r][c]
 
-for (let step = 26; step >= 1 && !found; step--) {
-  const prevSize = (1 << (step - 1)) - 1;
+for (let r = 0; r < sizeR; r++) {
+  for (let c = 0; c < sizeC; c++) {
+    const value = nextInt();
 
-  if (pos === 1) {
-    console.log(String.fromCharCode('a'.charCodeAt() + (step - 1)));
-    found = true;
-  } else if (pos <= 1 + prevSize) {
-    pos--;
-  } else {
-    pos -= 1 + prevSize;
+    if (r === 0 && c === 0) {
+      minSum[r][c] = value;
+    } else if (r === 0) {
+      minSum[r][c] = minSum[r][c - 1] + value;
+    } else if (c === 0) {
+      minSum[r][c] = minSum[r - 1][c] + value;
+    } else {
+      minSum[r][c] = Math.min(minSum[r - 1][c], minSum[r][c - 1]) + value;
+    }
   }
 }
 
-assert(found);
+console.log(minSum[sizeR - 1][sizeC - 1]);
 
 /*
-шаг 1 - 1 = 2^1 - 1;
-шаг 2 - 1 + (шаг 1) * 2 = 1 + 1 * 2 = 3 = 2^2 - 1;
-шаг 3 - 1 + (шаг 2) * 2 = 1 + 3 * 2 = 7 = 2^3 - 1;
-шаг 4 - 1 + (шаг 3) * 2 = 1 + 7 * 2 = 15 = 2^4 - 1;
-
-найти символ на позиции N = 10 в строке после шага 4
-найти символ на позиции N = 2 в строке после шага 3
-найти символ на позиции N = 1 в строке после шага 2 для первого символа шага ответ получается по кодам символов String.fromCharCode('a'.charCodeAt() + (step - 1))
-dcbaabaacbaabaa
-???????????????
-d#######$$$$$$$
-         ^
-шаг 4 = d + (шаг 3 длины 7) + (шаг 3 длины 7);
-
-10
-
-10 - 7 + 1 = 2
-
-шаг 3 = c + (шаг 2 длины 3) + (шаг 2 длины 3);
-
-c###$$$
- ^
+3 4
+1 1 1 1
+5 2 2 100
+9 4 2 1
 */
