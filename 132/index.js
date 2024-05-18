@@ -1,5 +1,5 @@
 function readline() {
-  const fs = require('fs');
+  const fs = require("fs");
   let b = Buffer.alloc(64);
   let pos = 0;
   while (true) {
@@ -30,11 +30,16 @@ const INF = n * 100;
 const dist = [];
 
 for (let i = 0; i < n; i++) {
-  dist.push(readline().trim().split(/\s+/).map((s) => s === '-1' ? INF : Number(s)));
+  dist.push(
+    readline()
+      .trim()
+      .split(/\s+/)
+      .map((s) => (s === "-1" ? INF : Number(s))),
+  );
 }
 
 /*
-алгоритм Дейкстры 
+алгоритм Дейкстры
 на входе взвешенный граф с неотрицательными весами и начальная вершина
 на выходе расстояние от начальной вершины до всех вершин графа
 
@@ -43,7 +48,7 @@ for (let i = 0; i < n; i++) {
 по памяти - O(V) + исходные данные O(V**2)
 */
 
-//minDist[i] - минимальная стоимость пути из s в вершину i с промежуточными финализированными вершинами 
+//minDist[i] - минимальная стоимость пути из s в вершину i с промежуточными финализированными вершинами
 const minDist = Array.from({ length: n }, () => INF);
 minDist[s] = 0;
 
