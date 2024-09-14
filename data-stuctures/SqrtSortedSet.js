@@ -1,134 +1,134 @@
 const assert = (e) => {
-  if (!e) {
-    throw new Error('assertion failed');
-  }
+    if (!e) {
+        throw new Error('assertion failed');
+    }
 };
 
 class SqrtSortedSet { // with duplicates
-  constructor() {
-    this.groups = [];
-    this.maxGroupSize = 512;
-    this.debug = false;
-  }
-
-  checkInvariant() {
-    if (!this.debug) {
-      return;
+    constructor() {
+        this.groups = [];
+        this.maxGroupSize = 512;
+        this.debug = false;
     }
 
-    for (const group of this.groups) {
-      assert(1 <= group.length && group.length <= this.maxGroupSize);
+    checkInvariant() {
+        if (!this.debug) {
+            return;
+        }
 
-      for (let i = 1; i < group.length; i++) {
-        assert(group[i - 1] <= group[i]);
-      }
+        for (const group of this.groups) {
+            assert(1 <= group.length && group.length <= this.maxGroupSize);
+
+            for (let i = 1; i < group.length; i++) {
+                assert(group[i - 1] <= group[i]);
+            }
+        }
+
+        for (let i = 1; i < this.groups.length; i++) {
+            assert(this.groups[i - 1].at(-1) <= this.groups[i][0]);
+        }
     }
 
-    for (let i = 1; i < this.groups.length; i++) {
-      assert(this.groups[i - 1].at(-1) <= this.groups[i][0]);
-    }
-  }
+    getGroupIndex(v) {
+        let g = 0;
 
-  getGroupIndex(v) {
-    let g = 0;
+        while (g + 1 < this.groups.length && v >= this.groups[g + 1][0]) {
+            g++;
+        }
 
-    while (g + 1 < this.groups.length && v >= this.groups[g + 1][0]) {
-      g++;
+        return g;
     }
 
-    return g;
-  }
+    getValueIndex(v, group) {
+        let i = 0;
 
-  getValueIndex(v, group) {
-    let i = 0;
+        while (i < group.length && v > group[i]) {
+            i++;
+        }
 
-    while (i < group.length && v > group[i]) {
-      i++;
+        return i;
     }
 
-    return i;
-  }
+    add(v) {
+        const g = this.getGroupIndex(v);
 
-  add(v) {
-    const g = this.getGroupIndex(v);
+        if (g === 0 && this.groups.length === 0) {
+            this.groups.push([]);
+        }
 
-    if (g === 0 && this.groups.length === 0) {
-      this.groups.push([]);
+        const group = this.groups[g];
+        const i = this.getValueIndex(v, group);
+
+        group.splice(i, 0, v);
+
+        if (group.length > this.maxGroupSize) {
+            const group1 = group.slice(0, this.maxGroupSize >> 1);
+            const group2 = group.slice(this.maxGroupSize >> 1);
+
+            this.groups.splice(g, 1, group1, group2);
+        }
+
+        this.checkInvariant();
     }
 
-    const group = this.groups[g];
-    const i = this.getValueIndex(v, group);
+    remove(v) {
+        const g = this.getGroupIndex(v);
 
-    group.splice(i, 0, v);
+        const group = this.groups[g];
+        const i = this.getValueIndex(v, group);
 
-    if (group.length > this.maxGroupSize) {
-      const group1 = group.slice(0, this.maxGroupSize >> 1);
-      const group2 = group.slice(this.maxGroupSize >> 1);
+        assert(group[i] === v);
 
-      this.groups.splice(g, 1, group1, group2);
+        group.splice(i, 1);
+
+        if (group.length === 0) {
+            this.groups.splice(g, 1);
+        }
+
+        this.checkInvariant();
     }
 
-    this.checkInvariant();
-  }
+    findGE(v) { // greater than v or equal, else INF
+        let g = 0;
 
-  remove(v) {
-    const g = this.getGroupIndex(v);
+        while (g < this.groups.length && v > this.groups[g].at(-1)) {
+            g++;
+        }
 
-    const group = this.groups[g];
-    const i = this.getValueIndex(v, group);
+        if (g === this.groups.length) {
+            return Infinity;
+        }
 
-    assert(group[i] === v);
+        const group = this.groups[g];
+        let i = 0;
 
-    group.splice(i, 1);
+        while (i < group.length && v > group[i]) {
+            i++;
+        }
 
-    if (group.length === 0) {
-      this.groups.splice(g, 1);
+        assert(i < group.length);
+        return group[i];
     }
 
-    this.checkInvariant();
-  }
+    findLE(v) { // less than v or equal, else -INF
+        let g = this.groups.length - 1;
 
-  findGE(v) { // greater than v or equal, else INF
-    let g = 0;
+        while (g >= 0 && v < this.groups[g][0]) {
+            g--;
+        }
 
-    while (g < this.groups.length && v > this.groups[g].at(-1)) {
-      g++;
+        if (g === -1) {
+            return -Infinity;
+        }
+
+        const group = this.groups[g];
+        let i = group.length - 1;
+
+        while (i >= 0 && v < group[i]) {
+            i--;
+        }
+
+        assert(i >= 0);
+        return group[i];
     }
-
-    if (g === this.groups.length) {
-      return Infinity;
-    }
-
-    const group = this.groups[g];
-    let i = 0;
-
-    while (i < group.length && v > group[i]) {
-      i++;
-    }
-
-    assert(i < group.length);
-    return group[i];
-  }
-
-  findLE(v) { // less than v or equal, else -INF
-    let g = this.groups.length - 1;
-
-    while (g >= 0 && v < this.groups[g][0]) {
-      g--;
-    }
-
-    if (g === -1) {
-      return -Infinity;
-    }
-
-    const group = this.groups[g];
-    let i = group.length - 1;
-
-    while (i >= 0 && v < group[i]) {
-      i--;
-    }
-
-    assert(i >= 0);
-    return group[i];
-  }
 }

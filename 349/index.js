@@ -1,72 +1,72 @@
 const assert = (e) => {
-  if (!e) {
-    throw new Error('assertion failed');
-  }
+    if (!e) {
+        throw new Error('assertion failed');
+    }
 };
 
 class Scanner {
-  constructor() {
-    this.fs = require('fs');
-    this.b = Buffer.alloc(1 << 16);
-    this.pos = 0;
-    this.size = 0;
-    this.EOF = -1;
-    this.nextInt = this.nextInt.bind(this);
-  }
-
-  _nextChar() { // returns code of next char and skips it or returns EOF if the stream ended
-    if (this.pos === this.size) {
-      this.size = this.fs.readSync(0, this.b, 0, this.b.length);
-      this.pos = 0;
-
-      if (this.size === 0) {
-        return this.EOF;
-      }
+    constructor() {
+        this.fs = require('fs');
+        this.b = Buffer.alloc(1 << 16);
+        this.pos = 0;
+        this.size = 0;
+        this.EOF = -1;
+        this.nextInt = this.nextInt.bind(this);
     }
 
-    assert(this.pos < this.size);
+    _nextChar() { // returns code of next char and skips it or returns EOF if the stream ended
+        if (this.pos === this.size) {
+            this.size = this.fs.readSync(0, this.b, 0, this.b.length);
+            this.pos = 0;
 
-    const ans = this.b[this.pos];
-    this.pos++;
+            if (this.size === 0) {
+                return this.EOF;
+            }
+        }
 
-    return ans;
-  }
+        assert(this.pos < this.size);
 
-  nextInt() {
-    const SPACE = ' '.charCodeAt(0);
-    const CR = '\r'.charCodeAt(0);
-    const LF = '\n'.charCodeAt(0);
-    const ZERO = '0'.charCodeAt(0);
-    const NINE = '9'.charCodeAt(0);
-    const MINUS = '-'.charCodeAt(0);
-    let ch = this._nextChar();
+        const ans = this.b[this.pos];
+        this.pos++;
 
-    while (ch === SPACE || ch === CR || ch === LF) {
-      ch = this._nextChar();
+        return ans;
     }
 
-    let multiply = 1;
+    nextInt() {
+        const SPACE = ' '.charCodeAt(0);
+        const CR = '\r'.charCodeAt(0);
+        const LF = '\n'.charCodeAt(0);
+        const ZERO = '0'.charCodeAt(0);
+        const NINE = '9'.charCodeAt(0);
+        const MINUS = '-'.charCodeAt(0);
+        let ch = this._nextChar();
 
-    if (ch === MINUS) {
-      ch = this._nextChar();
-      multiply = -1;
+        while (ch === SPACE || ch === CR || ch === LF) {
+            ch = this._nextChar();
+        }
+
+        let multiply = 1;
+
+        if (ch === MINUS) {
+            ch = this._nextChar();
+            multiply = -1;
+        }
+
+        assert(ZERO <= ch && ch <= NINE);
+
+        let n = ch - ZERO;
+        ch = this._nextChar();
+
+        while (ZERO <= ch && ch <= NINE) {
+            const d = ch - ZERO;
+            n = n * 10 + d;
+            ch = this._nextChar();
+        }
+
+        assert(ch === SPACE || ch === CR || ch === LF || ch === this.EOF);
+
+        return n * multiply;
     }
-
-    assert(ZERO <= ch && ch <= NINE);
-
-    let n = ch - ZERO;
-    ch = this._nextChar();
-
-    while (ZERO <= ch && ch <= NINE) {
-      const d = ch - ZERO;
-      n = n * 10 + d;
-      ch = this._nextChar();
-    }
-
-    assert(ch === SPACE || ch === CR || ch === LF || ch === this.EOF);
-
-    return n * multiply;
-  }
 }
 
 const input = new Scanner();
@@ -80,23 +80,23 @@ isPrime[0] = false;
 isPrime[1] = false;
 
 for (let i = 2; i * i <= last; i++) {
-  if (isPrime[i]) {
-    for (let j = i * i; j <= last; j += i) {
-      isPrime[j] = false;
+    if (isPrime[i]) {
+        for (let j = i * i; j <= last; j += i) {
+            isPrime[j] = false;
+        }
     }
-  }
 }
 
 const primes = [];
 
 for (let i = first; i <= last; i++) {
-  if (isPrime[i]) {
-    primes.push(i);
-  }
+    if (isPrime[i]) {
+        primes.push(i);
+    }
 }
 
 if (primes.length === 0) {
-  console.log('Absent');
+    console.log('Absent');
 } else {
-  console.log(primes.join('\n'));
+    console.log(primes.join('\n'));
 }

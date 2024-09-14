@@ -1,25 +1,25 @@
 function readline() {
-  const fs = require("fs");
-  let b = Buffer.alloc(64);
-  let pos = 0;
-  while (true) {
-    const len = fs.readSync(0, b, pos, 1);
-    if (len == 0) {
-      return String(b.subarray(0, pos));
+    const fs = require("fs");
+    let b = Buffer.alloc(64);
+    let pos = 0;
+    while (true) {
+        const len = fs.readSync(0, b, pos, 1);
+        if (len == 0) {
+            return String(b.subarray(0, pos));
+        }
+        if (b[pos] == 13) {
+            continue;
+        }
+        if (b[pos] == 10) {
+            return String(b.subarray(0, pos));
+        }
+        pos++;
+        if (pos == b.length) {
+            const nb = Buffer.alloc(b.length * 2);
+            b.copy(nb);
+            b = nb;
+        }
     }
-    if (b[pos] == 13) {
-      continue;
-    }
-    if (b[pos] == 10) {
-      return String(b.subarray(0, pos));
-    }
-    pos++;
-    if (pos == b.length) {
-      const nb = Buffer.alloc(b.length * 2);
-      b.copy(nb);
-      b = nb;
-    }
-  }
 }
 
 let [n, s, f] = readline().trim().split(/\s+/).map(Number);
@@ -30,12 +30,12 @@ const INF = n * 100;
 const dist = [];
 
 for (let i = 0; i < n; i++) {
-  dist.push(
-    readline()
-      .trim()
-      .split(/\s+/)
-      .map((s) => (s === "-1" ? INF : Number(s))),
-  );
+    dist.push(
+        readline()
+            .trim()
+            .split(/\s+/)
+            .map((s) => (s === "-1" ? INF : Number(s))),
+    );
 }
 
 /*
@@ -56,39 +56,39 @@ minDist[s] = 0;
 const isFinal = Array.from({ length: n }, () => false);
 
 while (true) {
-  let bestI = -1;
+    let bestI = -1;
 
-  for (let i = 0; i < n; i++) {
-    if (!isFinal[i]) {
-      if (bestI === -1 || minDist[i] < minDist[bestI]) {
-        bestI = i;
-      }
+    for (let i = 0; i < n; i++) {
+        if (!isFinal[i]) {
+            if (bestI === -1 || minDist[i] < minDist[bestI]) {
+                bestI = i;
+            }
+        }
     }
-  }
 
-  if (bestI === -1 || minDist[bestI] === INF) {
-    break;
-  }
-
-  isFinal[bestI] = true;
-
-  if (bestI === f) {
-    break;
-  }
-
-  for (let i = 0; i < n; i++) {
-    const newDist = minDist[bestI] + dist[bestI][i];
-
-    if (newDist < minDist[i]) {
-      minDist[i] = newDist;
+    if (bestI === -1 || minDist[bestI] === INF) {
+        break;
     }
-  }
+
+    isFinal[bestI] = true;
+
+    if (bestI === f) {
+        break;
+    }
+
+    for (let i = 0; i < n; i++) {
+        const newDist = minDist[bestI] + dist[bestI][i];
+
+        if (newDist < minDist[i]) {
+            minDist[i] = newDist;
+        }
+    }
 }
 
 if (minDist[f] === INF) {
-  console.log(-1);
+    console.log(-1);
 } else {
-  console.log(minDist[f]);
+    console.log(minDist[f]);
 }
 
 /*
