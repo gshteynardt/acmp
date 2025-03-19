@@ -1,84 +1,38 @@
-class DequeFull {
-    static MIN_SIZE = 16;
-
+class Deque {
     constructor() {
-        this.q = Array(DequeFull.MIN_SIZE).fill(null);
-        this.first = DequeFull.MIN_SIZE >> 1;
-        this.after = DequeFull.MIN_SIZE >> 1;
+        this.q = [];
+        this.first = 0;
     }
 
     size() {
-        return this.after - this.first;
+        return this.q.length - this.first;
     }
 
     addLast(v) {
-        if (this.after === this.q.length) {
-            if (this.size() * 2 <= this.q.length) {
-                const newFirst = (this.q.length - this.size()) >> 1;
-                const newAfter = newFirst + this.size();
-
-                for (let i = 0; this.first + i < this.after; i++) {
-                    this.q[newFirst + i] = this.q[this.first + i];
-                }
-
-                for (let i = newAfter; i < this.q.length; i++) {
-                    this.q[i] = null;
-                }
-
-                this.first = newFirst;
-                this.after = newAfter;
-            } else {
-                this.#resize(this.q.length * 2);
-            }
-        }
-
-        this.q[this.after] = v;
-        this.after++;
+        this.q.push(v);
     }
 
     peekLast() {
-        if (this.size() > 0) {
-            return this.q[this.after - 1];
+        if (this.size() === 0) {
+            throw new Error('The deque is empty');
         }
 
-        throw new Error('The deque is empty');
+        return this.q.at(-1);
     }
 
     pollLast() {
-        if (this.size() > 0) {
-            this.after--;
-            const ans = this.q[this.after];
-            this.q[this.after] = null;
-
-            if (this.size() * 8 <= this.q.length && this.q.length > DequeFull.MIN_SIZE) {
-                this.#resize(this.q.length >> 1);
-            }
-
-            return ans;
+        if (this.size() === 0) {
+            throw new Error('The deque is empty');
         }
 
-        throw new Error('The deque is empty');
+        return this.q.pop();
     }
 
     addFirst(v) {
         if (this.first === 0) {
-            if (this.size() * 2 <= this.q.length) {
-                const newFirst = (this.q.length - this.size()) >> 1;
-                const newAfter = newFirst + this.size();
-
-                for (let i = this.size() - 1; i >= 0; i--) {
-                    this.q[newFirst + i] = this.q[this.first + i];
-                }
-
-                for (let i = 0; i < newFirst; i++) {
-                    this.q[i] = null;
-                }
-
-                this.first = newFirst;
-                this.after = newAfter;
-            } else {
-                this.#resize(this.q.length * 2);
-            }
+            const extraLen = Math.max(32, this.size());
+            this.q = Array(extraLen).fill(null).concat(this.q);
+            this.first = extraLen;
         }
 
         this.first--;
@@ -86,48 +40,28 @@ class DequeFull {
     }
 
     peekFirst() {
-        if (this.size() > 0) {
-            return this.q[this.first];
+        if (this.size() === 0) {
+            throw new Error('The deque is empty');
         }
 
-        throw new Error('The deque is empty');
+        return this.q[this.first];
     }
 
     pollFirst() {
-        if (this.size() > 0) {
-            const ans = this.q[this.first];
-            this.q[this.first] = null;
-            this.first++;
-
-            if (this.size() * 8 <= this.q.length && this.q.length > DequeFull.MIN_SIZE) {
-                this.#resize(this.q.length >> 1);
-            }
-
-            return ans;
+        if (this.size() === 0) {
+            throw new Error('The deque is empty');
         }
 
-        throw new Error('The deque is empty');
-    }
+        const v = this.q[this.first];
+        this.q[this.first] = null;
+        this.first++;
 
-    get(index) {
-        if (0 <= index && index < this.size()) {
-            return this.q[this.first + index];
+        if (this.q.length >= 64 && this.size() <= this.q.length >> 2) {
+            const toDelete = this.q.length >> 1;
+            this.q = this.q.slice(toDelete);
+            this.first -= toDelete;
         }
 
-        throw new Error('inccorect index');
-    }
-
-    #resize(newSize) {
-        const newQ = Array(newSize).fill(null);
-        const newFirst = (newQ.length - this.size()) >> 1;
-        const newAfter = newFirst + this.size();
-
-        for (let i = 0; this.first + i < this.after; i++) {
-            newQ[newFirst + i] = this.q[this.first + i];
-        }
-
-        this.q = newQ;
-        this.first = newFirst;
-        this.after = newAfter;
+        return v;
     }
 }

@@ -18,7 +18,7 @@ https://leetcode.com/problems/maximum-length-of-pair-chain/ - solved
 https://leetcode.com/problems/video-stitching/ - solved
 https://leetcode.com/problems/maximum-number-of-events-that-can-be-attended/ - solved (homework)
 
-https://leetcode.com/problems/maximum-number-of-non-overlapping-subarrays-with-sum-equals-target/
+https://leetcode.com/problems/maximum-number-of-non-overlapping-subarrays-with-sum-equals-target/ - solved (homework)
  (предварительно 325 premium - longest 560 - count)
 
 https://leetcode.com/problems/remove-duplicate-letters/ - solved
