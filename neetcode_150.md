@@ -68,7 +68,7 @@ Greedy
 
 Intervala
 57. Insert Interval - 07.03.2025 20min
-56. Merge Intervals - 08.03.2025 20min
+56. Merge Intervals - 30.03.2025 15min
 
 Graphs
 200. Number of Islands - 06.03.2025 15min
@@ -77,4 +77,3 @@ Graphs
 286. Walls and Gates - 06.03.2025 10min
 994. Rotting Oranges
 417. Pacific Atlantic Water Flow
-
