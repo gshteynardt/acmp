@@ -2,6 +2,10 @@ class MinHeap {
     constructor(compare) { // compare(x, y) sign 0 <=> x sign y  
         this.heap = [null];
         this.compare = compare;
+
+        for (let i = this.heap.length >> 1; i >= 1; i--) {
+            this.updateSubtree(i);
+        }
     }
 
     getLeftChildIndex(index) {
@@ -22,8 +26,34 @@ class MinHeap {
         this.heap[index2] = t;
     }
 
+    updateSubtree(currentIndex) {
+        let leftChildIndex = this.getLeftChildIndex(currentIndex);
+        let rightChildIndex = this.getRightChildIndex(currentIndex);
+
+        while (true) {
+            console.assert(leftChildIndex < rightChildIndex);
+
+            if (!(leftChildIndex < this.heap.length)) {
+                break;
+            }
+
+            const smallerChildIndex = !(rightChildIndex < this.heap.length) || 
+                this.compare(this.heap[leftChildIndex], this.heap[rightChildIndex]) < 0 ? 
+                leftChildIndex : rightChildIndex;
+
+            if (this.compare(this.heap[currentIndex], this.heap[smallerChildIndex]) < 0) {
+                break;
+            }
+
+            this.swap(currentIndex, smallerChildIndex);
+            currentIndex = smallerChildIndex;
+            leftChildIndex = this.getLeftChildIndex(currentIndex);
+            rightChildIndex = this.getRightChildIndex(currentIndex);
+        }
+    }
+
     peek() {
-        if (this.heap.length === 1) {
+        if (this.size() === 0) {
             throw Error('Heap is empty');
         }
 
@@ -44,7 +74,7 @@ class MinHeap {
     }
 
     poll() {
-        if (this.heap.length === 1) {
+        if (this.size() === 0) {
             throw Error('Heap is empty');
         }
 
@@ -53,30 +83,7 @@ class MinHeap {
 
         if (this.heap.length > 1) {
             this.heap[1] = last;
-            let currentIndex = 1;
-            let leftChildIndex = this.getLeftChildIndex(currentIndex);
-            let rightChildIndex = this.getRightChildIndex(currentIndex);
-
-            while (true) {
-                console.assert(leftChildIndex < rightChildIndex);
-
-                if (!(leftChildIndex < this.heap.length)) {
-                    break;
-                }
-
-                const smallerChildIndex = !(rightChildIndex < this.heap.length) ||
-                    this.compare(this.heap[leftChildIndex], this.heap[rightChildIndex]) < 0
-                    ? leftChildIndex : rightChildIndex;
-
-                if (this.compare(this.heap[currentIndex], this.heap[smallerChildIndex]) < 0) {
-                    break;
-                }
-
-                this.swap(currentIndex, smallerChildIndex);
-                currentIndex = smallerChildIndex;
-                leftChildIndex = this.getLeftChildIndex(currentIndex);
-                rightChildIndex = this.getRightChildIndex(currentIndex);
-            }
+            this.updateSubtree(1);
         }
 
         return min;
