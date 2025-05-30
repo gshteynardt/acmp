@@ -1,6 +1,6 @@
 class MinHeap {
-    constructor(compare) { // compare(x, y) sign 0 <=> x sign y  
-        this.heap = [null];
+    constructor(compare, values = []) { // compare(x, y) sign 0 <=> x sign y  
+        this.heap = [null, ...values];
         this.compare = compare;
 
         for (let i = this.heap.length >> 1; i >= 1; i--) {
