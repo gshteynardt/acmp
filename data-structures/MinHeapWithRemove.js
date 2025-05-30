@@ -1,8 +1,9 @@
 // объекты в данном MinHeap должны иметь поле heapIndex
 
 class MinHeap {
-    constructor(compare) { // compare(x, y) sign 0 <=> x sign y
-        this.heap = [null];
+    constructor(compare, values = []) { // compare(x, y) sign 0 <=> x sign y
+        this.#setHeapIndex(values);
+        this.heap = [null, ...values];
         this.compare = compare;
     }
 
@@ -29,9 +30,35 @@ class MinHeap {
         obj2.heapIndex = index2;
     }
 
+    updateSubtree(currentIndex) {
+        let leftChildIndex = this.getLeftChildIndex(currentIndex);
+        let rightChildIndex = this.getRightChildIndex(currentIndex);
+
+        while (true) {
+            console.assert(leftChildIndex < rightChildIndex);
+
+            if (!(leftChildIndex < this.heap.length)) {
+                break;
+            }
+
+            const smallerChildIndex = !(rightChildIndex < this.heap.length) || 
+                this.compare(this.heap[leftChildIndex], this.heap[rightChildIndex]) < 0 ? 
+                leftChildIndex : rightChildIndex;
+
+            if (this.compare(this.heap[currentIndex], this.heap[smallerChildIndex]) < 0) {
+                break;
+            }
+
+            this.swap(currentIndex, smallerChildIndex);
+            currentIndex = smallerChildIndex;
+            leftChildIndex = this.getLeftChildIndex(currentIndex);
+            rightChildIndex = this.getRightChildIndex(currentIndex);
+        }
+    }
+
     peek() {
-        if (this.heap.length === 1) {
-            throw Error("Heap is empty");
+        if (this.size() === 0) {
+            throw Error('Heap is empty');
         }
 
         return this.heap[1];
@@ -60,38 +87,11 @@ class MinHeap {
         }
 
         const min = this.heap[1];
-        min.heapIndex = -1;
-
         const last = this.heap.pop();
 
         if (this.heap.length > 1) {
             this.heap[1] = last;
-            last.heapIndex = 1;
-
-            let currentIndex = 1;
-            let leftChildIndex = this.getLeftChildIndex(currentIndex);
-            let rightChildIndex = this.getRightChildIndex(currentIndex);
-
-            while (true) {
-                console.assert(leftChildIndex < rightChildIndex);
-
-                if (!(leftChildIndex < this.heap.length)) {
-                    break;
-                }
-
-                const smallerChildIndex = !(rightChildIndex < this.heap.length) || 
-                    this.compare(this.heap[leftChildIndex], this.heap[rightChildIndex]) < 0 ? 
-                    leftChildIndex : rightChildIndex;
-
-                if (this.compare(this.heap[currentIndex], this.heap[smallerChildIndex]) < 0) {
-                    break;
-                }
-
-                this.swap(currentIndex, smallerChildIndex);
-                currentIndex = smallerChildIndex;
-                leftChildIndex = this.getLeftChildIndex(currentIndex);
-                rightChildIndex = this.getRightChildIndex(currentIndex);
-            }
+            this.updateSubtree(1);
         }
 
         return min;
@@ -109,5 +109,11 @@ class MinHeap {
 
     size() {
         return this.heap.length - 1;
+    }
+    
+    #setHeapIndex(values) {
+        for (let i = 1; i <= values.length; i++) {
+            values[i].heapIndex = i
+        }
     }
 }
