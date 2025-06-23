@@ -1,5 +1,5 @@
 const binPow = (num, pow, mod) => {
-    if (pow === 0) {
+    if (pow === 0n) {
         return 1n;
     }
 
