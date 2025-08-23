@@ -157,23 +157,24 @@ const n = nextInt();
 const nums = Array(n);
 
 for (let i = 0; i < n; i++) {
-    nums[i] = nextInt();
+    const num = nextInt();
+    nums[i] = num === 0 ? 1 : 0;
 }
 
 const groupSize = Math.floor(Math.sqrt(n));
 const nGroups = Math.ceil(n / groupSize);
-const groupMax = Array(nGroups).fill(0);
+const groupCountZero = Array(nGroups).fill(0);
 
 for (let i = 0; i < n; i++) {
     const g = Math.floor(i / groupSize);
-    groupMax[g] = Math.max(groupMax[g], nums[i]);
+    groupCountZero[g] += nums[i];
 }
 
-const nq = nextInt(); // the number of queries
+const nq = nextInt();
 
-for (let iq = 0; iq < nq; iq++) { // the index of query
-    const l = (nextInt() - 1);
-    const r = (nextInt() - 1);
+for (let q = 0; q < nq; q++) {
+    const l = nextInt() - 1;
+    const r = nextInt() - 1;
 
     const gl = Math.floor(l / groupSize);
     const gr = Math.floor(r / groupSize);
@@ -182,24 +183,21 @@ for (let iq = 0; iq < nq; iq++) { // the index of query
 
     if (gl === gr) {
         for (let i = l; i <= r; i++) {
-            ans = Math.max(ans, nums[i]);
+            ans += nums[i];
         }
     } else {
-        // левый хвост
-        const afterGroupL = Math.min(n, (gl + 1) * groupSize);
+        const afterGroup = Math.min(n, (gl + 1) * groupSize);
 
-        for (let i = l; i < afterGroupL; i++) {
-            ans = Math.max(ans, nums[i]);
+        for (let i = l; i < afterGroup; i++) {
+            ans += nums[i];
         }
 
-        // целые группы между gl и gr
         for (let g = gl + 1; g <= gr - 1; g++) {
-            ans = Math.max(ans, groupMax[g]);
+            ans += groupCountZero[g];
         }
 
-        // правый хвост
         for (let i = gr * groupSize; i <= r; i++) {
-            ans = Math.max(ans, nums[i]);
+            ans += nums[i];
         }
     }
 
@@ -208,8 +206,8 @@ for (let iq = 0; iq < nq; iq++) { // the index of query
 
 /*
 5
-3 8 1 7 6
+0 0 0 0 2
 2
-1 3
-3 5
+2 3
+2 5
 */

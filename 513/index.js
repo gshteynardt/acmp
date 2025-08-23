@@ -1,12 +1,12 @@
 const assert = (e) => {
     if (!e) {
-        throw new Error("assertion failed");
+        throw new Error('assertion failed');
     }
 };
 
 class Scanner {
     constructor() {
-        this.fs = require("fs");
+        this.fs = require('fs');
         this.b = Buffer.alloc(1 << 16);
         this.pos = 0;
         this.size = 0;
@@ -38,12 +38,12 @@ class Scanner {
     }
 
     nextInt() {
-        const SPACE = " ".charCodeAt(0);
-        const CR = "\r".charCodeAt(0);
-        const LF = "\n".charCodeAt(0);
-        const ZERO = "0".charCodeAt(0);
-        const NINE = "9".charCodeAt(0);
-        const MINUS = "-".charCodeAt(0);
+        const SPACE = ' '.charCodeAt(0);
+        const CR = '\r'.charCodeAt(0);
+        const LF = '\n'.charCodeAt(0);
+        const ZERO = '0'.charCodeAt(0);
+        const NINE = '9'.charCodeAt(0);
+        const MINUS = '-'.charCodeAt(0);
         let ch = this.lastCh;
 
         if (ch === this.NONE) {
@@ -80,9 +80,9 @@ class Scanner {
     }
 
     next() {
-        const SPACE = " ".charCodeAt(0);
-        const CR = "\r".charCodeAt(0);
-        const LF = "\n".charCodeAt(0);
+        const SPACE = ' '.charCodeAt(0);
+        const CR = '\r'.charCodeAt(0);
+        const LF = '\n'.charCodeAt(0);
         let ch = this.lastCh;
 
         if (ch === this.NONE) {
@@ -111,15 +111,15 @@ class Scanner {
     }
 
     nextLine() {
-        const CR = "\r".charCodeAt(0);
-        const LF = "\n".charCodeAt(0);
+        const CR = '\r'.charCodeAt(0);
+        const LF = '\n'.charCodeAt(0);
         let ch = this.lastCh;
 
         if (ch === this.NONE) {
             ch = this._nextChar();
         }
 
-        let s = "";
+        let s = '';
 
         while (true) {
             if (ch === this.EOF) {
@@ -153,63 +153,26 @@ class Scanner {
 
 const input = new Scanner();
 const nextInt = input.nextInt;
-const n = nextInt();
-const nums = Array(n);
+const n = BigInt(nextInt());
 
-for (let i = 0; i < n; i++) {
-    nums[i] = nextInt();
-}
-
-const groupSize = Math.floor(Math.sqrt(n));
-const nGroups = Math.ceil(n / groupSize);
-const groupMax = Array(nGroups).fill(0);
-
-for (let i = 0; i < n; i++) {
-    const g = Math.floor(i / groupSize);
-    groupMax[g] = Math.max(groupMax[g], nums[i]);
-}
-
-const nq = nextInt(); // the number of queries
-
-for (let iq = 0; iq < nq; iq++) { // the index of query
-    const l = (nextInt() - 1);
-    const r = (nextInt() - 1);
-
-    const gl = Math.floor(l / groupSize);
-    const gr = Math.floor(r / groupSize);
-
-    let ans = 0;
-
-    if (gl === gr) {
-        for (let i = l; i <= r; i++) {
-            ans = Math.max(ans, nums[i]);
-        }
-    } else {
-        // левый хвост
-        const afterGroupL = Math.min(n, (gl + 1) * groupSize);
-
-        for (let i = l; i < afterGroupL; i++) {
-            ans = Math.max(ans, nums[i]);
-        }
-
-        // целые группы между gl и gr
-        for (let g = gl + 1; g <= gr - 1; g++) {
-            ans = Math.max(ans, groupMax[g]);
-        }
-
-        // правый хвост
-        for (let i = gr * groupSize; i <= r; i++) {
-            ans = Math.max(ans, nums[i]);
-        }
+const f = (n) => {
+    let res = 1n;
+    
+    for (let i = 2n; i <= n; i++) {
+        res *= i;
     }
 
-    console.log(ans);
+    return res;
+};
+
+const c = (n, k) => {
+    return f(n) / (f(k) * f(n - k));
+};
+
+let res = 0n;
+
+for (let k = 2n; k <= n; k++) {
+    res += c(n, k); 
 }
 
-/*
-5
-3 8 1 7 6
-2
-1 3
-3 5
-*/
+console.log(Number(res));

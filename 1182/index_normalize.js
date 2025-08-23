@@ -153,63 +153,164 @@ class Scanner {
 
 const input = new Scanner();
 const nextInt = input.nextInt;
-const n = nextInt();
-const nums = Array(n);
+const nStations = nextInt();
+const nPlaces = nextInt();
+const mQueries = nextInt();
 
-for (let i = 0; i < n; i++) {
-    nums[i] = nextInt();
-}
+const remPlaces = Array(nStations - 1).fill(nPlaces);
+const groupSize = Math.floor(Math.sqrt(nStations - 1));
+const nGroups = Math.ceil((nStations - 1) / groupSize);
+const groupMin = Array(nGroups).fill(nPlaces); // groupMin[g] = min(remPlaces[i] - groupSub[(i / groupSize) | 0])
+const groupSub = Array(nGroups).fill(0); // i элемент равен remPlaces[i] - groupSub[(i / groupSize) | 0]
 
-const groupSize = Math.floor(Math.sqrt(n));
-const nGroups = Math.ceil(n / groupSize);
-const groupMax = Array(nGroups).fill(0);
+const getGroupBorders = (g) => {
+    const groupFirst = g * groupSize;
+    const afterGroup = Math.min(nStations - 1, (g + 1) * groupSize);
+    
+    return [groupFirst, afterGroup];
+};
 
-for (let i = 0; i < n; i++) {
-    const g = Math.floor(i / groupSize);
-    groupMax[g] = Math.max(groupMax[g], nums[i]);
-}
+const normalize = (g) => {
+    if (groupSub[g] === 0) {
+        return;
+    }
+    
+    const [groupFirst, afterGroup] = getGroupBorders(g);
+    
+    for (let i = groupFirst; i < afterGroup; i++) {
+        remPlaces[i] -= groupSub[g];
+    }
+    
+    groupSub[g] = 0;
+};
 
-const nq = nextInt(); // the number of queries
+const updateMin = (g) => {
+    const [groupFirst, afterGroup] = getGroupBorders(g);
+    groupMin[g] = remPlaces[groupFirst] - groupSub[g];
+    
+    for (let i = groupFirst + 1; i < afterGroup; i++) {
+        groupMin[g] = Math.min(groupMin[g], remPlaces[i] - groupSub[g]);
+    }
+};
 
-for (let iq = 0; iq < nq; iq++) { // the index of query
-    const l = (nextInt() - 1);
-    const r = (nextInt() - 1);
+const canBuyTicket = (left, right) => {
+    const gl = (left / groupSize) | 0;
+    const gr = (right / groupSize) | 0;
+    
+    if (gl === gr) {    
+        normalize(gl);
 
-    const gl = Math.floor(l / groupSize);
-    const gr = Math.floor(r / groupSize);
-
-    let ans = 0;
-
-    if (gl === gr) {
-        for (let i = l; i <= r; i++) {
-            ans = Math.max(ans, nums[i]);
+        for (let i = left; i <= right; i++) {
+            if (remPlaces[i] === 0) {
+                return false;
+            }
         }
     } else {
-        // левый хвост
-        const afterGroupL = Math.min(n, (gl + 1) * groupSize);
+        const [, afterLeftGroup] = getGroupBorders(gl);
+        
+        normalize(gl);
 
-        for (let i = l; i < afterGroupL; i++) {
-            ans = Math.max(ans, nums[i]);
+        for (let i = left; i < afterLeftGroup; i++) {
+            if (remPlaces[i] === 0) {
+                return false;
+            }
         }
-
-        // целые группы между gl и gr
+        
         for (let g = gl + 1; g <= gr - 1; g++) {
-            ans = Math.max(ans, groupMax[g]);
+            if (groupMin[g] === 0) {
+                return false;
+            }
         }
+        
+        const [rightGroupFirst] = getGroupBorders(gr);
+        
+        normalize(gr);
 
-        // правый хвост
-        for (let i = gr * groupSize; i <= r; i++) {
-            ans = Math.max(ans, nums[i]);
+        for (let i = rightGroupFirst; i <= right; i++) {
+            if (remPlaces[i] === 0) {
+                return false;
+            }
         }
     }
+    
+    return true;
+};
 
-    console.log(ans);
+const buyTicket = (left, right) => {
+    const gl = (left / groupSize) | 0;
+    const gr = (right / groupSize) | 0;
+    
+    if (gl === gr) {        
+        for (let i = left; i <= right; i++) {
+            remPlaces[i]--;
+        }
+        
+        updateMin(gl);
+    } else {
+        const [, afterLeftGroup] = getGroupBorders(gl);
+
+        for (let i = left; i < afterLeftGroup; i++) {
+            remPlaces[i]--;
+        }
+        
+        updateMin(gl);
+
+        for (let g = gl + 1; g <= gr - 1; g++) {
+            groupMin[g]--;
+            groupSub[g]++;
+        }
+        
+        const [rightGroupFirst] = getGroupBorders(gr);
+
+        for (let i = rightGroupFirst; i <= right; i++) {
+            remPlaces[i]--;
+        }
+        
+        updateMin(gr);
+    }
+};
+
+for (let q = 0; q < mQueries; q++) {
+    const left = nextInt();
+    const right = nextInt() - 1;
+
+    if (canBuyTicket(left, right)) {
+        buyTicket(left, right);
+        console.log('Yes');
+    } else {
+        console.log('No');
+    }
 }
 
 /*
-5
-3 8 1 7 6
-2
-1 3
-3 5
+0 1 2 3 4 - станции
+ 2 2 2 2  - доступно билетов
+
+запрос 0 4
+
+0 1 2 3 4 - станции
+ 1 1 1 1  - доступно билетов
+
+запрос 1 2
+
+0 1 2 3 4 - станции
+ 1 0 1 1  - доступно билетов
+ 
+запрос 1 4
+
+0 1 2 3 4 - станции
+ 1 0 1 1  - доступно билетов
+ 
+запрос 2 4
+
+0 1 2 3 4 - станции
+ 1 0 0 0  - доступно билетов
+*/
+
+/*
+5 2 4
+0 4
+1 2
+1 4
+2 4
 */

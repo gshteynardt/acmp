@@ -66,7 +66,7 @@ Greedy
 53. Maximum Subarray - 04.03.2025 5min
 55. Jump Game - 05.03.2025 5min
 
-Intervala
+Interval
 57. Insert Interval - 07.03.2025 20min
 56. Merge Intervals - 30.03.2025 15min
 
@@ -77,3 +77,6 @@ Graphs
 286. Walls and Gates - 06.03.2025 10min
 994. Rotting Oranges
 417. Pacific Atlantic Water Flow
+
+Bit Manipulation
+191. Number of 1 Bits
