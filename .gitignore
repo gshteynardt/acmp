@@ -5,6 +5,53 @@ node_modules
 .cache
 dist
 
+# C++ compiled files
+
+## Prerequisites
+*.d
+
+## Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+## Precompiled Headers
+*.gch
+*.pch
+
+## Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+## Fortran module files
+*.mod
+*.smod
+
+## Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+## Executables
+*.exe
+*.out
+*.app
+
+## Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+## Compiled executables without extension (Unix/macOS)
+## Pattern: ignore files in numbered dirs that match the dir name
+[0-9]*/[0-9]*
+[0-9]*/[0-9]*[a-z]
+[0-9]*/[0-9]*[0-9]
+
 # OS and IDE
 
 ## Idea-based IDEs
