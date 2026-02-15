@@ -1,49 +1,53 @@
 const { nextInt, nextLine } = require("../utils/Scanner");
 
+const assert = (e) => {
+    if (!e) {
+        throw new Error("assertion failed");
+    }
+};
+
 class Counter {
-    constructor(dict = {}) {
-        this.counter = new Map(Object.entries(dict));
+    constructor(dict = new Map()) {
+        assert(dict instanceof Map)
+        this.counter = new Map(dict);
     }
 
     get(key) {
         return this.counter.get(key) ?? 0;
     }
 
-    set(key, value) {
-        this.counter.set(key, value);
-    }
-
     mul(num) {
-        const result = new Counter();
+        const result = new Map();
 
         for (const [key, value] of this.counter) {
             result.set(key, value * num);
         }
 
-        return result;
+        return new Counter(result);
     }
 
     add(other) {
-        const result = new Counter();
+        const result = new Map();
 
         for (const [key, value] of this.counter) {
             result.set(key, value);
         }
 
         for (const [key, value] of other.counter) {
-            result.set(key, result.get(key) + value);
+            result.set(key, (result.get(key) ?? 0) + value);
         }
 
-        return result;
+        return new Counter(result);
     }
 
     equals(other) {
-        const allKeys = new Set([
-            ...this.counter.keys(),
-            ...other.counter.keys(),
-        ]);
+        const keys = this.counter.keys().toArray();
 
-        for (const key of allKeys) {
+        if (keys.length !== other.counter.keys().toArray) {
+            return false;
+        }
+
+        for (const key of keys) {
             if (this.get(key) !== other.get(key)) {
                 return false;
             }
@@ -52,12 +56,6 @@ class Counter {
         return true;
     }
 }
-
-const assert = (e) => {
-    if (!e) {
-        throw new Error("assertion failed");
-    }
-};
 
 /*
 <формула> ::= <число> <последовательность> {"+" <число> <последовательность>}
@@ -132,7 +130,7 @@ const readFormula = () => {
         } else {
             const elem = chemElem();
 
-            return new Counter({ [elem]: 1 });
+            return new Counter(new Map([[elem, 1]]));
         }
     };
 

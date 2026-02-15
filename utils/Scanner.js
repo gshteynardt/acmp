@@ -155,3 +155,5 @@ const input = new Scanner();
 const nextInt = input.nextInt;
 const next = input.next;
 const nextLine = input.nextLine;
+
+module.exports = { nextInt, next, nextLine };

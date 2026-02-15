@@ -2,7 +2,7 @@ s = input()
 
 ch = ''
 pos = 0
-EOS = '\n'  # end of string
+EOS = '\n'
 
 def nextChar():
     global ch, pos
@@ -47,15 +47,14 @@ def formula():
 
         return min(v1, v2)
     else:
-        assert len(ch) == 1 and '0' <= ch <= '9'
+        assert '0' <= ch <= '9'
         v = ord(ch) - ord('0')
-
         nextChar()
+
         return v
 
 nextChar()
 v = formula()
 
 assert ch == EOS
-
 print(v)

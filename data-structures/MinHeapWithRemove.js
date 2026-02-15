@@ -112,7 +112,7 @@ class MinHeap {
     }
     
     #setHeapIndex(values) {
-        for (let i = 1; i <= values.length; i++) {
+        for (let i = 1; i < values.length; i++) {
             values[i].heapIndex = i
         }
     }
